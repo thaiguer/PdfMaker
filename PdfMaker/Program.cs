@@ -15,15 +15,20 @@ string pdfFilePath = "c:\\dev\\thecadfile.pdf";
 CadDocument doc = new CadDocument();
 
 //folha A4
-doc.Entities.Add(CreateLine(0, 0, 0, 297, 0, 0));
-doc.Entities.Add(CreateLine(297, 0, 0, 297, 210, 0));
-doc.Entities.Add(CreateLine(297, 210, 0, 0, 210, 0));
-doc.Entities.Add(CreateLine(0, 210, 0, 0, 0, 0));
+doc.Entities.Add(CreateLine(0, 0, 297, 0));
+doc.Entities.Add(CreateLine(297, 0, 297, 210));
+doc.Entities.Add(CreateLine(297, 210, 0, 210));
+doc.Entities.Add(CreateLine(0, 210, 0, 0));
 
 //outras linhas
-doc.Entities.Add(CreateLine(0, 0, 0, 150, 10, 0));
-doc.Entities.Add(CreateLine(45, 15, 0, 75, 38, 0));
-doc.Entities.Add(CreateLine(18, 3, 0, 5, 150, 0));
+doc.Entities.Add(CreateLine(0, 0, 150, 10));
+doc.Entities.Add(CreateLine(45, 15, 75, 38));
+doc.Entities.Add(CreateLine(18, 3, 5, 150));
+
+//texto
+doc.Entities.Add(CreateText("Hello from this great thing", 5, 15));
+doc.Entities.Add(CreateText("Hello again", 45, 80));
+doc.Entities.Add(CreateText("texting stuff, what a great moment", 100, 150));
 
 //write
 using (DwgWriter writer = new DwgWriter(cadFilePath, doc))
@@ -32,12 +37,12 @@ using (DwgWriter writer = new DwgWriter(cadFilePath, doc))
 }
 
 //read
-var docModelSpaceEntities = new List<Entity>();
+var docEntities = new List<Entity>();
 using (DwgReader reader = new DwgReader(cadFilePath))
 {
-    CadDocument doc2;
-    doc2 = reader.Read();
-    docModelSpaceEntities.AddRange(doc2.Entities);
+    CadDocument doc0;
+    doc0 = reader.Read();
+    docEntities.AddRange(doc0.Entities);
 }
 
 // Create a new PDF document.
@@ -60,13 +65,27 @@ var height = page.Height.Point;
 //gfx.DrawLine(XPens.Red, 0, 0, width, height);
 //gfx.DrawLine(XPens.Red, width, 0, 0, height);
 
-foreach(var entity in docModelSpaceEntities)
+foreach(var entity in docEntities)
 {
     if(entity is Line line)
     {
         XPoint start = new XPoint(line.StartPoint.X, line.StartPoint.Y);
         XPoint end = new XPoint(line.EndPoint.X, line.EndPoint.Y);
         gfx.DrawLine(XPens.Red, start, end);
+        continue;
+    }
+
+    if(entity is TextEntity textEntity)
+    {
+        var font0 = new XFont("Times New Roman", textEntity.Height, XFontStyleEx.BoldItalic);
+        gfx.DrawString(
+                textEntity.Value,
+                font0,
+                XBrushes.Black,
+                new XRect(textEntity.AlignmentPoint.X, textEntity.AlignmentPoint.Y, page.Width.Point, textEntity.Height),
+                XStringFormats.Center
+            );
+        continue;
     }
 }
 
@@ -78,12 +97,10 @@ foreach(var entity in docModelSpaceEntities)
 //         new XRect(width / 2 - r, height / 2 - r, 2 * r, 2 * r)
 //     );
 
-// Create a font.
-var font = new XFont("Times New Roman", 20, XFontStyleEx.BoldItalic);
-
 // Draw the text.
+var font = new XFont("Times New Roman", 20, XFontStyleEx.BoldItalic);
 gfx.DrawString("Hello, PDFsharp!", font, XBrushes.Black,
-    new XRect(0, 0, page.Width.Point, page.Height.Point), XStringFormats.Center);
+   new XRect(0, 0, page.Width.Point, page.Height.Point), XStringFormats.Center);
 
 // Save the document...
 //var filename = PdfFileUtility.GetTempPdfFullFileName("samples/HelloWorldSample");
@@ -91,12 +108,27 @@ gfx.DrawString("Hello, PDFsharp!", font, XBrushes.Black,
 document.Save(pdfFilePath);
 PdfFileUtility.ShowDocument(pdfFilePath);
 
-Line CreateLine(double startX, double startY, double startZ, double endX, double endY, double endZ)
+Line CreateLine(double startX, double startY, double endX, double endY)
 {
     Line line = new Line
     {
-        StartPoint = new CSMath.XYZ(startX, startY, startZ),
-        EndPoint = new CSMath.XYZ(endX, endY, endZ)
+        StartPoint = new CSMath.XYZ(startX, startY, 0),
+        EndPoint = new CSMath.XYZ(endX, endY, 0)
     };
     return line;
+}
+
+TextEntity CreateText(string value, double startX, double startY)
+{
+    CSMath.XYZ insertPoint = new CSMath.XYZ(startX, startY, 0);
+    ACadSharp.Entities.TextEntity text = new TextEntity
+    {
+        Height = 2,
+        Value = value,
+        InsertPoint = insertPoint,
+        AlignmentPoint = insertPoint,
+        HorizontalAlignment = ACadSharp.Entities.TextHorizontalAlignment.Center,
+        VerticalAlignment = ACadSharp.Entities.TextVerticalAlignmentType.Middle
+    };
+    return text;
 }
