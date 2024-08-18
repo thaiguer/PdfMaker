@@ -8,6 +8,7 @@ using PdfSharp.Snippets.Font;
 
 Console.WriteLine("Hello, World!");
 
+/*
 string cadFilePath = "c:\\dev\\thecadfile.dwg";
 string pdfFilePath = "c:\\dev\\thecadfile.pdf";
 
@@ -15,10 +16,10 @@ string pdfFilePath = "c:\\dev\\thecadfile.pdf";
 CadDocument doc = new CadDocument();
 
 //folha A4
-doc.Entities.Add(CreateLine(0, 0, 297, 0));
-doc.Entities.Add(CreateLine(297, 0, 297, 210));
-doc.Entities.Add(CreateLine(297, 210, 0, 210));
-doc.Entities.Add(CreateLine(0, 210, 0, 0));
+doc.Entities.Add(CreateLine(0, 0, 420, 0));
+doc.Entities.Add(CreateLine(420, 0, 420, 297));
+doc.Entities.Add(CreateLine(420, 297, 0, 297));
+doc.Entities.Add(CreateLine(0, 297, 0, 0));
 
 //outras linhas
 doc.Entities.Add(CreateLine(0, 0, 150, 10));
@@ -43,6 +44,11 @@ using (DwgReader reader = new DwgReader(cadFilePath))
     CadDocument doc0;
     doc0 = reader.Read();
     docEntities.AddRange(doc0.Entities);
+
+    foreach(var entity in doc0.Entities)
+    {
+        Console.WriteLine(entity.GetType());
+    }
 }
 
 // Create a new PDF document.
@@ -62,8 +68,10 @@ var gfx = XGraphics.FromPdfPage(page, XGraphicsUnit.Millimeter);
 var width = page.Width.Point;
 var height = page.Height.Point;
 
-//gfx.DrawLine(XPens.Red, 0, 0, width, height);
+//gfx.DrawLine(XPens.Red, 15, 15, width, height);
 //gfx.DrawLine(XPens.Red, width, 0, 0, height);
+
+var font0 = new XFont("Times New Roman", 20, XFontStyleEx.BoldItalic);
 
 foreach(var entity in docEntities)
 {
@@ -71,13 +79,12 @@ foreach(var entity in docEntities)
     {
         XPoint start = new XPoint(line.StartPoint.X, line.StartPoint.Y);
         XPoint end = new XPoint(line.EndPoint.X, line.EndPoint.Y);
-        gfx.DrawLine(XPens.Red, start, end);
+        //gfx.DrawLine(XPens.Red, start, end);
         continue;
     }
 
     if(entity is TextEntity textEntity)
     {
-        var font0 = new XFont("Times New Roman", textEntity.Height, XFontStyleEx.BoldItalic);
         gfx.DrawString(
                 textEntity.Value,
                 font0,
@@ -89,6 +96,9 @@ foreach(var entity in docEntities)
     }
 }
 
+// Draw the text.
+gfx.DrawString("Hello, PDFsharp!", font0, XBrushes.Black, new XRect(150, 150, page.Width.Point, page.Height.Point), XStringFormats.Center);
+
 // Draw a circle with a red pen which is 1.5 point thick.
 // var r = width / 5;
 // gfx.DrawEllipse(
@@ -97,10 +107,6 @@ foreach(var entity in docEntities)
 //         new XRect(width / 2 - r, height / 2 - r, 2 * r, 2 * r)
 //     );
 
-// Draw the text.
-var font = new XFont("Times New Roman", 20, XFontStyleEx.BoldItalic);
-gfx.DrawString("Hello, PDFsharp!", font, XBrushes.Black,
-   new XRect(0, 0, page.Width.Point, page.Height.Point), XStringFormats.Center);
 
 // Save the document...
 //var filename = PdfFileUtility.GetTempPdfFullFileName("samples/HelloWorldSample");
@@ -131,4 +137,42 @@ TextEntity CreateText(string value, double startX, double startY)
         VerticalAlignment = ACadSharp.Entities.TextVerticalAlignmentType.Middle
     };
     return text;
-}
+}*/
+
+// Create a font.
+var font = new XFont("Times New Roman", 20, XFontStyleEx.BoldItalic);
+font = new XFont("Arial", 20, XFontStyleEx.Bold);
+
+// Create a new PDF document.
+var document = new PdfDocument();
+document.Info.Title = "Created with PDFsharp";
+document.Info.Subject = "Just a simple Hello-World program.";
+
+// Create an empty page in this document.
+var page = document.AddPage();
+//page.Size = PageSize.Letter;
+
+// Get an XGraphics object for drawing on this page.
+var gfx = XGraphics.FromPdfPage(page);
+gfx.DrawString( "Hello, again!", font, XBrushes.Black, new XPoint(150, 45), XStringFormats.TopLeft);
+gfx.DrawString( "some other text in same position", font, XBrushes.HotPink, new XPoint(150, 45), XStringFormats.TopLeft);
+
+// Draw two lines with a red default pen.
+var width = page.Width.Point;
+var height = page.Height.Point;
+gfx.DrawLine(XPens.Red, 0, 0, width, height);
+gfx.DrawLine(XPens.Red, width, 0, 0, height);
+
+// Draw a circle with a red pen which is 1.5 point thick.
+var r = width / 5;
+gfx.DrawEllipse(new XPen(XColors.Red, 1.5), XBrushes.White, new XRect(width / 2 - r, height / 2 - r, 2 * r, 2 * r));
+
+// Draw the text.
+//gfx.DrawString("Hello, PDFsharp!", font, XBrushes.Black, new XRect(0, 0, page.Width.Point, page.Height.Point), XStringFormats.Center);
+gfx.DrawString( "Hello, again!", font, XBrushes.Black, new XPoint(0, 0), XStringFormats.TopLeft);
+
+// Save the document...
+var filename = PdfFileUtility.GetTempPdfFullFileName("samples/HelloWorldSample");
+document.Save(filename);
+// ...and start a viewer.
+PdfFileUtility.ShowDocument(filename);
