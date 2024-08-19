@@ -11,4 +11,10 @@
     <ProjectReference Include="..\PdfMaker.Lib\PdfMaker.Lib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="thecadfile.dwg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

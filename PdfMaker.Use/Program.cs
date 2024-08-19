@@ -5,18 +5,22 @@ using PdfMaker.Lib;
 using PdfMaker.Lib.DocumentModel;
 using PdfMaker.Lib.EntitiesHandle;
 using PdfSharp.Quality;
+using PdfMaker.Lib.CadModel;
 
 Console.WriteLine("Hello, World!");
 
+string testCadFileFullName = @$"{AppDomain.CurrentDomain.BaseDirectory}\thecadfile.dwg";
+string pdfOutputDirectoryPath = @"C:\dev";
+
 var documentInfo = new PdfDocumentInfo(
-    title: "SamplePdf",
+    title: "thepdffile",
     subject: "Just Some PDF",
     author: Environment.UserName,
-    directoryPath: @"C:\dev");
+    directoryPath: pdfOutputDirectoryPath);
 
 var pdfFromModelSpace = new PdfFromEntities(documentInfo);
-//TODO: add a sample dwg or dxf and get entities
-//pdfFromModelSpace.CadEntities = //adjust to get from File
+var reader = new Reader();
+pdfFromModelSpace.CadEntities = reader.ReadFromModelSpace(testCadFileFullName);
 
 //add optional plotstyle //https://github.com/phusband/PiaNO
 //or make some way to implement
