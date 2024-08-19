@@ -15,7 +15,8 @@ var documentInfo = new PdfDocumentInfo(
     directoryPath: @"C:\dev");
 
 var pdfFromModelSpace = new PdfFromEntities(documentInfo);
-//add entities
+//TODO: add a sample dwg or dxf and get entities
+//pdfFromModelSpace.CadEntities = //adjust to get from File
 
 //add optional plotstyle //https://github.com/phusband/PiaNO
 //or make some way to implement

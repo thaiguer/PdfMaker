@@ -12,6 +12,7 @@ using ACadSharp.Entities;
 using ACadSharp.IO;
 using System.Reflection.Metadata;
 using PdfMaker.Lib.EntitiesHandle;
+using PdfMaker.Lib.CadModel;
 
 namespace PdfMaker.Lib;
 
@@ -19,6 +20,7 @@ public class PdfFromEntities
 {
     public PdfDocumentInfo PdfDocumentInfo { get; set; }
     public List<Entity> CadEntities { get; set; } = new();
+    public List<PdfEntity> PdfEntities { get; set; } = new();
     public PdfDocument PdfDocument { get; set; } = null!;
 
     public PdfFromEntities(PdfDocumentInfo documentInfo)
@@ -47,12 +49,19 @@ public class PdfFromEntities
             page.Orientation = PdfDocumentInfo.PageOrientation;
             
             var xGraphics = XGraphics.FromPdfPage(page, XGraphicsUnit.Millimeter);
-            EntitiesHandler entitiesHandler = new EntitiesHandler();
-            xGraphics.DrawLine(XPens.Red, 12, 500, 150, 150);
-            xGraphics.DrawLine(XPens.Red, 12, 500, 150, 150);
+            EntitiesHandler entitiesHandler = new EntitiesHandler(xGraphics);
+            
+            //just for test
+            XPen xPen = new XPen(XColors.BlanchedAlmond, Convert.MillimeterToPoint(0.5));
+            xGraphics.DrawLine(xPen, 0, 0, 150, 150);
+            xGraphics.DrawLine(xPen, 12, 500, 150, 150);
+            //just for test
+
             foreach (var entity in CadEntities)
             {
-                entitiesHandler.InsertEntity(entity, xGraphics);
+                PdfEntity pdfEntity = new PdfEntity(entity);
+                entitiesHandler.InsertEntity(pdfEntity);
+                PdfEntities.Add(pdfEntity);
             }
 
             document.Save(PdfDocumentInfo.FileFullName);

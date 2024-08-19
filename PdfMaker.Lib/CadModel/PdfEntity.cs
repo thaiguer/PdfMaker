@@ -2,10 +2,10 @@
 
 namespace PdfMaker.Lib.CadModel
 {
-    internal class PdfEntity
+    public class PdfEntity
     {
         public Entity CadEntity { get; set; }
-        public bool IsInsertedInPDF { get; set; } = false;
+        public bool Drawn { get; set; } = false;
 
         public PdfEntity(Entity cadEntity)
         {
