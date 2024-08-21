@@ -7,6 +7,7 @@ namespace PdfMaker.Lib.EntitiesHandle;
 public class EntitiesHandler
 {
     private XGraphics _xGraphics { get; set; }
+
     public EntitiesHandler(XGraphics xGraphics)
     {
         _xGraphics = xGraphics;
@@ -21,17 +22,76 @@ public class EntitiesHandler
             return;
         }
 
+        //ACadSharp.Entities.Ellipse
+        //ACadSharp.Entities.Hatch]
+        //ACadSharp.Entities.MLine
+        //ACadSharp.Entities.MText
+        //ACadSharp.Entities.Point
+
+        if (entity.CadEntity is Circle circle)
+        {
+            DrawCircle(circle);
+            entity.Drawn = true;
+            return;
+        }
+
+        //if (entity.CadEntity is Arc arc)
+        //{
+        //    DrawArc(arc);
+        //    entity.Drawn = true;
+        //    return;
+        //}
+
+        //if (entity.CadEntity is LwPolyline lwPolyLine)
+        //{
+        //    DrawLwPolyline(lwPolyLine);
+        //    entity.Drawn = true;
+        //    return;
+        //}
+
+        //if (entity.CadEntity is TextEntity textEntity)
+        //{
+        //    DrawTextEntity(textEntity);
+        //    entity.Drawn = true;
+        //    return;
+        //}
+
+        //if (entity.CadEntity is Insert insert)
+        //{
+        //    DrawInsert(insert);
+        //    entity.Drawn = true;
+        //    return;
+        //}
+
+
         //TODO: add other entity types
     }
 
     void DrawLine(Line line)
     {
-        XPen xPen = new XPen(XColors.Black, Convert.MillimeterToPoint(10));
+        if (line.IsInvisible) return;
+
+        XPen xPen = new XPen(
+            Styles.CadIndexColors.GetXColorFromIndex((byte)line.Color.Index),
+            Convert.MillimeterToPoint(((double)line.LineWeight)));
+
         XPoint start = new XPoint(line.StartPoint.X, line.StartPoint.Y);
         XPoint end = new XPoint(line.EndPoint.X, line.EndPoint.Y);
-        _xGraphics.DrawLine(XPens.Red, start, end);
+        _xGraphics.DrawLine(xPen, start, end);
+    }
 
-        Console.WriteLine(line.Color.Index);
+    void DrawCircle(Circle circle)
+    {
+        if (circle.IsInvisible) return;
+
+        XPen xPen = new XPen(
+            Styles.CadIndexColors.GetXColorFromIndex((byte)circle.Color.Index),
+            Convert.MillimeterToPoint(((double)circle.LineWeight)));
+
+        XPoint xLocation = new XPoint(circle.Center.X, circle.Center.Y);
+        XSize xSixe = new XSize(circle.Radius, circle.Radius);
+        XRect xLimits = new XRect(xLocation, xSixe);
+        _xGraphics.DrawEllipse(xPen, xLimits);
     }
 
     //void DrawEntities()

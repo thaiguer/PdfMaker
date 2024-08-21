@@ -9,7 +9,8 @@ using PdfMaker.Lib.CadModel;
 
 Console.WriteLine("Hello, World!");
 
-string testCadFileFullName = @$"{AppDomain.CurrentDomain.BaseDirectory}\thecadfile.dwg";
+//string testCadFileFullName = @$"{AppDomain.CurrentDomain.BaseDirectory}\thecadfile.dwg";
+string testCadFileFullName = @$"C:\dev\sample.dwg";
 string pdfOutputDirectoryPath = @"C:\dev";
 
 var documentInfo = new PdfDocumentInfo(
