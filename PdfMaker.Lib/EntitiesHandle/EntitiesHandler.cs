@@ -26,7 +26,13 @@ public class EntitiesHandler
         //ACadSharp.Entities.Hatch]
         //ACadSharp.Entities.MLine
         //ACadSharp.Entities.MText
-        //ACadSharp.Entities.Point
+
+        if (entity.CadEntity is Point point)
+        {
+            DrawPoint(point);
+            entity.Drawn = true;
+            return;
+        }
 
         if (entity.CadEntity is Circle circle)
         {
@@ -35,16 +41,23 @@ public class EntitiesHandler
             return;
         }
 
+        if (entity.CadEntity is Polyline polyLine)
+        {
+            //DrawPolyline(polyLine);
+            //entity.Drawn = true;
+            return;
+        }
+
+        if (entity.CadEntity is LwPolyline lwPolyLine)
+        {
+            //DrawLwPolyline(lwPolyLine);
+            //entity.Drawn = true;
+            return;
+        }
+
         //if (entity.CadEntity is Arc arc)
         //{
         //    DrawArc(arc);
-        //    entity.Drawn = true;
-        //    return;
-        //}
-
-        //if (entity.CadEntity is LwPolyline lwPolyLine)
-        //{
-        //    DrawLwPolyline(lwPolyLine);
         //    entity.Drawn = true;
         //    return;
         //}
@@ -93,6 +106,37 @@ public class EntitiesHandler
         XRect xLimits = new XRect(xLocation, xSixe);
         _xGraphics.DrawEllipse(xPen, xLimits);
     }
+
+    void DrawPoint(Point point)
+    {
+        if (point.IsInvisible) return;
+
+        XPen xPen = new XPen(
+            Styles.CadIndexColors.GetXColorFromIndex((byte)point.Color.Index),
+            Convert.MillimeterToPoint(((double)point.LineWeight)));
+
+        XPoint xLocation = new XPoint(point.Location.X, point.Location.Y);
+        _xGraphics.DrawLine(xPen, xLocation, xLocation);
+    }
+
+    void DrawPolyline(Polyline polyline)
+    {
+        if (polyline.IsInvisible) return;
+
+        //foreach(var vertice in polyline.Vertices)
+        //{
+        //    vertice.Location
+        //}
+
+        //XPen xPen = new XPen(
+        //    Styles.CadIndexColors.GetXColorFromIndex((byte)line.Color.Index),
+        //    Convert.MillimeterToPoint(((double)line.LineWeight)));
+
+        //XPoint start = new XPoint(line.StartPoint.X, line.StartPoint.Y);
+        //XPoint end = new XPoint(line.EndPoint.X, line.EndPoint.Y);
+        //_xGraphics.DrawLine(xPen, start, end);
+    }
+
 
     //void DrawEntities()
     //{
