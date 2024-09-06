@@ -12,6 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="SampleDwg\just a drawing.dwg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="SampleDwg\thecadfile.dwg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

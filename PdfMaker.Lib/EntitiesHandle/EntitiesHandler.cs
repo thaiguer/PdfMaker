@@ -91,6 +91,7 @@ public class EntitiesHandler
         XPoint start = new XPoint(line.StartPoint.X, line.StartPoint.Y);
         XPoint end = new XPoint(line.EndPoint.X, line.EndPoint.Y);
         _xGraphics.DrawLine(xPen, start, end);
+        _xGraphics.DrawRectangle
     }
 
     void DrawCircle(Circle circle)
