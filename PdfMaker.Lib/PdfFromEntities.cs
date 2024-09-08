@@ -50,12 +50,6 @@ public class PdfFromEntities
             
             var xGraphics = XGraphics.FromPdfPage(page, XGraphicsUnit.Millimeter);
             EntitiesHandler entitiesHandler = new EntitiesHandler(xGraphics);
-            
-            //just for test
-            //XPen xPen = new XPen(XColors.BlanchedAlmond, Convert.MillimeterToPoint(0.5));
-            //xGraphics.DrawLine(xPen, 0, 0, 150, 150);
-            //xGraphics.DrawLine(xPen, 12, 500, 150, 150);
-            //just for test
 
             foreach (var entity in CadEntities)
             {
@@ -73,9 +67,11 @@ public class PdfFromEntities
             }
 
             document.Save(PdfDocumentInfo.FileFullName);
+            PdfFileUtility.ShowDocument(PdfDocumentInfo.FileFullName);
         }
-        catch
+        catch (Exception ex)
         {
+            Console.Write(ex.Message);
             return false;
         }
         return true;

@@ -41,30 +41,23 @@ public class EntitiesHandler
             return;
         }
 
-        if (entity.CadEntity is Polyline polyLine)
+        if (entity.CadEntity is TextEntity textEntity)
         {
-            //DrawPolyline(polyLine);
-            //entity.Drawn = true;
+            DrawTextEntity(textEntity);
+            entity.Drawn = true;
             return;
         }
 
         if (entity.CadEntity is LwPolyline lwPolyLine)
         {
-            //DrawLwPolyline(lwPolyLine);
-            //entity.Drawn = true;
+            DrawLwPolyline(lwPolyLine);
+            entity.Drawn = true;
             return;
         }
 
         //if (entity.CadEntity is Arc arc)
         //{
         //    DrawArc(arc);
-        //    entity.Drawn = true;
-        //    return;
-        //}
-
-        //if (entity.CadEntity is TextEntity textEntity)
-        //{
-        //    DrawTextEntity(textEntity);
         //    entity.Drawn = true;
         //    return;
         //}
@@ -80,6 +73,34 @@ public class EntitiesHandler
         //TODO: add other entity types
     }
 
+    void DrawLwPolyline(LwPolyline lwPolyline)
+    {
+        if (lwPolyline.IsInvisible) return;
+
+        for(int i = 0; i < lwPolyline.Vertices.Count; i++)
+        {
+            XPen xPen = new XPen(
+            Styles.CadIndexColors.GetXColorFromIndex(10),
+            Convert.MillimeterToPoint((double)lwPolyline.Vertices[i].StartWidth));
+            
+            XPoint start = new XPoint(lwPolyline.Vertices[i].Location.X, 297 - lwPolyline.Vertices[i].Location.Y);
+
+            XPoint end;
+            if (i + 1 >= lwPolyline.Vertices.Count)
+            {
+                if (!lwPolyline.IsClosed) continue;
+
+                end = new XPoint(lwPolyline.Vertices[0].Location.X, 297 - lwPolyline.Vertices[0].Location.Y);
+                _xGraphics.DrawLine(xPen, start, end);
+            }
+            else
+            {
+                end = new XPoint(lwPolyline.Vertices[i + 1].Location.X, 297 - lwPolyline.Vertices[i + 1].Location.Y);
+                _xGraphics.DrawLine(xPen, start, end);
+            }
+        }
+    }
+
     void DrawLine(Line line)
     {
         if (line.IsInvisible) return;
@@ -88,10 +109,19 @@ public class EntitiesHandler
             Styles.CadIndexColors.GetXColorFromIndex((byte)line.Color.Index),
             Convert.MillimeterToPoint(((double)line.LineWeight)));
 
-        XPoint start = new XPoint(line.StartPoint.X, line.StartPoint.Y);
-        XPoint end = new XPoint(line.EndPoint.X, line.EndPoint.Y);
+        XPoint start = new XPoint(line.StartPoint.X, 297 - line.StartPoint.Y);
+        XPoint end = new XPoint(line.EndPoint.X, 297 - line.EndPoint.Y);
         _xGraphics.DrawLine(xPen, start, end);
-        _xGraphics.DrawRectangle
+    }
+
+    void DrawTextEntity(TextEntity textEntity)
+    {
+        string fontName = "Arial";
+        if (textEntity.IsInvisible) return;
+
+        XFont xFont = new XFont(fontName, textEntity.Height);
+        XPoint position = new XPoint(textEntity.InsertPoint.X, 297 - textEntity.InsertPoint.Y);
+        _xGraphics.DrawString(textEntity.Value, xFont, XBrushes.BurlyWood, position);
     }
 
     void DrawCircle(Circle circle)
@@ -102,7 +132,7 @@ public class EntitiesHandler
             Styles.CadIndexColors.GetXColorFromIndex((byte)circle.Color.Index),
             Convert.MillimeterToPoint(((double)circle.LineWeight)));
 
-        XPoint xLocation = new XPoint(circle.Center.X, circle.Center.Y);
+        XPoint xLocation = new XPoint(circle.Center.X, 297 - circle.Center.Y);
         XSize xSixe = new XSize(circle.Radius, circle.Radius);
         XRect xLimits = new XRect(xLocation, xSixe);
         _xGraphics.DrawEllipse(xPen, xLimits);
@@ -116,7 +146,7 @@ public class EntitiesHandler
             Styles.CadIndexColors.GetXColorFromIndex((byte)point.Color.Index),
             Convert.MillimeterToPoint(((double)point.LineWeight)));
 
-        XPoint xLocation = new XPoint(point.Location.X, point.Location.Y);
+        XPoint xLocation = new XPoint(point.Location.X, 297 - point.Location.Y);
         _xGraphics.DrawLine(xPen, xLocation, xLocation);
     }
 

@@ -8,16 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PdfMaker.Lib\PdfMaker.Lib.csproj" />
+    <Compile Remove="SampleDwg\**" />
+    <EmbeddedResource Remove="SampleDwg\**" />
+    <None Remove="SampleDwg\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="SampleDwg\just a drawing.dwg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="SampleDwg\thecadfile.dwg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\PdfMaker.Lib\PdfMaker.Lib.csproj" />
   </ItemGroup>
 
 </Project>

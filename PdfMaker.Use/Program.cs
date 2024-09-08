@@ -9,8 +9,8 @@ using PdfMaker.Lib.CadModel;
 
 Console.WriteLine("Hello, World!");
 
-string testCadFileFullName = @$"{AppDomain.CurrentDomain.BaseDirectory}\SampleDwg\just a drawing.dwg";
-//string testCadFileFullName = @$"C:\dev\sample.dwg";
+//string testCadFileFullName = @$"{AppDomain.CurrentDomain.BaseDirectory}\SampleDwg\just a drawing2.dwg";
+string testCadFileFullName = @$"C:\dev\just a drawing2.dwg";
 string pdfOutputDirectoryPath = @"C:\dev";
 
 var documentInfo = new PdfDocumentInfo(
@@ -29,5 +29,3 @@ pdfFromModelSpace.CadEntities = reader.ReadFromModelSpace(testCadFileFullName);
 //a json file maybe
 
 pdfFromModelSpace.Create();
-
-PdfFileUtility.ShowDocument(pdfFromModelSpace.PdfDocumentInfo.FileFullName);
