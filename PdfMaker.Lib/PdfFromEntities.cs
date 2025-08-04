@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PdfMaker.Lib.DocumentModel;
+﻿using PdfMaker.Lib.DocumentModel;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using PdfSharp.Quality;
-using PdfSharp.Snippets.Font;
 using ACadSharp.Entities;
-using ACadSharp.IO;
-using System.Reflection.Metadata;
 using PdfMaker.Lib.EntitiesHandle;
 using PdfMaker.Lib.CadModel;
 
@@ -62,7 +54,7 @@ public class PdfFromEntities
             {
                 if(!pdfEntity.Drawn)
                 {
-                    Console.WriteLine($"{pdfEntity.CadEntity.GetType()} não incluído no PDF.");
+                    Console.WriteLine($"{pdfEntity.CadEntity.GetType()} not included on PDF.");
                 }
             }
 
