@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using CSMath;
 using PdfMaker.Lib.CadModel;
 using PdfSharp.Drawing;
 
@@ -24,7 +25,6 @@ public partial class EntitiesHandler
 
         //ACadSharp.Entities.Ellipse
         //ACadSharp.Entities.MLine
-        //ACadSharp.Entities.MText
 
         if (entity.CadEntity is Point point)
         {
@@ -45,6 +45,13 @@ public partial class EntitiesHandler
         if (entity.CadEntity is TextEntity textEntity)
         {
             DrawTextEntity(textEntity);
+            entity.Drawn = true;
+            return;
+        }
+
+        if (entity.CadEntity is MText mText)
+        {
+            DrawMText(mText);
             entity.Drawn = true;
             return;
         }
@@ -123,13 +130,31 @@ public partial class EntitiesHandler
     }
 
     void DrawTextEntity(TextEntity textEntity)
-    {
+    { 
         string fontName = "Arial";
         if (textEntity.IsInvisible) return;
 
         XFont xFont = new XFont(fontName, textEntity.Height);
         XPoint position = new XPoint(textEntity.InsertPoint.X, 297 - textEntity.InsertPoint.Y);
         _xGraphics.DrawString(textEntity.Value, xFont, XBrushes.BurlyWood, position);
+    }
+
+    void DrawMText(MText mText)
+    {
+        if (mText.IsInvisible) return;
+
+        var textLines = mText.Value.Split("\\P");
+        var nextInsertPoint = new XYZ(); //must change the next insert point to a different place
+
+        foreach (var line in textLines)
+        {
+            var textEntity = new TextEntity();
+            textEntity.Value = mText.Value;
+            textEntity.InsertPoint = mText.InsertPoint;
+            textEntity.Height = mText.Height;
+            DrawTextEntity(textEntity);
+            nextInsertPoint = new XYZ();
+        }
     }
 
     void DrawPoint(Point point)
